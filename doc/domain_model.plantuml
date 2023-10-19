@@ -1,14 +1,29 @@
-@startuml
+@startuml "domain_modeling"
 
-left to right direction
+title "Shop example Domain Modeling"
 
-skinparam class {
-}
+skinparam componentStyle rectangle
 
-Class01 "1" *-- "many" Class02 : contains
+component Member
+component Order
+component Delivery
+component OrderItem
+component Item
+component Category
+component Album
+component Book
+component Movie
 
-Class03 o-- Class04 : aggregation
+Member "1" -down- "*" Order
+Order "1" -down- "1" Delivery
 
-Class05 --> "1" Class06
+Order "1" -right- "*" OrderItem
+OrderItem "*" -right- "1" Item
 
-@enduml
+Category "*" -down- "*" Item
+
+Item <|-down- Album
+Item <|-down- Book
+Item <|-down- Movie
+
+@endum

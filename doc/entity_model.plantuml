@@ -1,0 +1,87 @@
+@startuml "entity_modeling"
+title "Shop example Entity Modeling"
+
+Entity Member {
+  id : Long
+  name : String
+  address : Address
+  orders : List
+}
+
+Entity Order {
+  id
+  **member : Member**
+  **orderItems : List**
+  **delivery : Delivery**
+  orderData : Date
+  status : OrderStatus
+}
+
+Entity Delivery {
+  id
+  order : Order
+  address : Address
+  status : DeliveryStatus
+}
+
+Entity Address <<Value Type>> {
+  city
+  street
+  zipcode
+}
+
+Entity OrderItem {
+  id
+  **item : Item**
+  **order : Order**
+  orderPrice
+  count
+}
+
+Entity Item {
+  id
+  name
+  price : int
+  stockQuantity
+  categories : List
+}
+
+Entity Category {
+  id
+  name
+  **items : List**
+  **parent : Category**
+  **child : List**
+}
+
+Entity Album {
+  artist
+  etc
+}
+
+Entity Book {
+  author
+  isbn
+}
+
+Entity Movie {
+  director
+  actor
+}
+
+
+Member "1" -down- "*" Order
+Order "1" -down- "1" Delivery
+
+Delivery -left- Address #transparent;line:transparent
+
+Order "1" -right- "*" OrderItem
+OrderItem "*" -right- "1" Item
+
+Category "*" -down- "*" Item
+
+Item <|-down- Album
+Item <|-down- Book
+Item <|-down- Movie
+
+@endum

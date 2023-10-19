@@ -1,0 +1,79 @@
+@startuml "table_modeling"
+title "Shop example Table Design"
+
+!define table(x) class x << (T,#FFAAAA) >>
+!define foreign_key(x) **x (FK)**
+
+table(Member) {
+  MEMBER_ID
+  ---
+  NAME
+  CITY
+  STREET
+  ZIPCODE
+}
+
+table(Orders) {
+  ORDER_ID
+  ---
+  foreign_key(MEMBER_ID)
+  foreign_key(DELIVERY_ID)
+  ORDERDATE
+  STATUS
+}
+
+table(Delivery) {
+  DELIVERY_ID
+  ---
+  STATUS
+  CITY
+  STREET
+  ZIPCODE
+}
+
+table(OrderItem) {
+  ORDER_ITEM_ID
+  ---
+  foreign_key(ORDER_ID)
+  foreign_key(ITEM_ID)
+  ORDERPRICE
+  COUNT
+}
+
+table(Item) {
+  ITEM_ID
+  ---
+  NAME
+  PRICE
+  STOCKQUANTITY
+  DTYPE
+  ARTIST
+  ETC
+  AUTHOR
+  ISBN
+  DIRECTOR
+  ACTOR
+}
+
+table(Category) {
+  CATEGORY_ID
+  ---
+  foreign_key(PARENT_ID)
+  NAME
+}
+
+table(CategoryItem) {
+  foreign_key(CATEGORY_ID)
+  foreign_key(ITEM_ID)
+}
+
+Member ||.down.o{ Orders
+Orders ||.down.|| Delivery
+
+Orders ||.right.|{ OrderItem
+OrderItem }o.right.|| Item
+
+Category ||.down.o{ CategoryItem
+CategoryItem }o.down.|| Item
+
+@endum
