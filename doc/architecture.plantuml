@@ -1,0 +1,21 @@
+@startuml "architecture"
+
+title "Shop example Application Architecture"
+
+skinparam componentStyle rectangle
+
+component Controller
+component Service
+component Repository
+component Domain
+database Database
+
+Controller -> Service
+Service -> Repository
+Repository -> Database
+
+Controller -down-> Domain
+Service -down-> Domain
+Repository -down-> Domain
+
+@endum

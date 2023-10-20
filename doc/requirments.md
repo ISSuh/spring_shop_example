@@ -90,3 +90,37 @@
 > 연관관계의 주인은 단순히 외래 키를 누가 관리하냐의 문제이지 비지니스상 우위에 있다고 주인으로 정하면 안됨.
 > 예를 들어 자동차와 바퀴가 있다면, 일대다 관계에서 항상 다쪽에 외래 키가 있으므로 외래 키가 있는 바퀴를 연관관계의 주인으로 정하면 됨.
 > 물론 자동차를 연관관계의 주인으로 정하는 것이 불가능 한 것은 아니지만 자동차를 연관관계의 주인으로 정하면 자동차가 관리하지 않는 바퀴 테이블의 외래 키 값이 업데이트 되므로 관리와 유지보수에 어렵고 추가적으로 별도의 업데이트 쿼리가 발생하는 성능 문제도 발생 함.
+
+### 엔티티 설계시 주의점
+
+#### 엔티티에는 가급적 Setter를 사용하지 말자
+  - Setter가 모두 열려있다면 변경 포인트가 너무 많아서 유지보수에 어려움이 있음
+
+#### 모든 연관관계는 지연로딩으로 설정
+  - 즉시로딩(EAGER)은 예측이 어렵고 어떤 SQL이 실행될지 추철하기 어려움
+    - 특히 JPQL을 실행할 떄 N+1 문제가 자주 발생할 수 있음
+  - 실무에서 모든 연관관계는 지연로딩(LAZY)로 설정해야 함
+  - 연관된 엔티티를 함꼐 DB에서 조회해야 한다면, fetch join또는 엔티티 그래프 기능을 사용
+  - @XToOne(OneToOne, ManyToOne)관계는 기본이 즉시로딩이므로 직접 지연로딩으로 설정해야 함
+
+#### 컬렉션은 필드에서 초기화 하자
+  - 컬렉션은 필드에서 바로 초기화하는것이 null 문제에 대해 안전함
+  - 하이버네이트는 엔티티를 영송화 할 뗴, 컬렉션을 감싸허 하이버네이트가 제공하는 내장 컬레션으로 변경하는데, 만약 getOrder()처럼 임의의 메소드에서 컬렉션을 잘못 생성하면 하이버네이트 내부 메커니즘에 문제가 발생할 수 있음. 그러므로 필드레벨에서 생성하는 것이 가장 안전하고 코드도 간결해짐
+
+## 어플리케이션 아키텍처
+![alt](http://www.plantuml.com/plantuml/png/TOr1JiGm303lVeNLErz0ks9VG5zWKekrIEp8SO7-dXogDZrmYZDZZMyjo6Cj6IVoz9JW5Alp110IcN6QdrQHVwdK_hlNcYLHY2dUh-ljIxIIKy5afPgonXnRPlI-GlgP6U0m-6OQRZcp3t1c_vR40tddQat2V1lWmmg9ma917zGO7_i0S5RnvVN8xMz7O-ySk_YdiTYFThaVF3fNF8Qk1cwiorh-0000)
+
+  - 계층형 구조 사용
+    - controller, web : 웹 계층
+    - service : 비지니스 로직 및 트랜잭션 처리
+    - repository : JPA를 직접 사용하는 계층. 엔티티 매니저 사용
+    - domin : 엔티티가 모여있는 계층. 모든 계층에서 사용
+  - 패키지 구조
+    - jpabook.jpashop
+      - domin
+      - exception
+      - repository
+      - service
+      - web
+
+## 참고
