@@ -28,4 +28,11 @@ public class ItemService {
   public List<Item> findItems() {
     return repository.findAll();
   }
+
+  public void updateItem(Long id, String name, int price, int stockQuantity) {
+    Item item = repository.findOne(id);
+    item.setName(name);
+    item.setPrice(price);
+    item.setStockQuantity(stockQuantity);
+  }
 }
