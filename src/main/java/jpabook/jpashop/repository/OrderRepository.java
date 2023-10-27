@@ -1,23 +1,15 @@
 package jpabook.jpashop.repository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
-import org.thymeleaf.standard.expression.BooleanTokenExpression;
 
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderSearch;
-import jpabook.jpashop.domain.OrderStatus;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -130,4 +122,14 @@ public class OrderRepository {
   //   return order.name.like(name);
   // }
 
+  public List<Order> findAllWithMemberDelivery() {
+    String jpql = 
+      "select o " +
+      "from Order o " +
+        "join fetch o.member m " +
+        "join fetch o.delivery d";
+
+    return entityManager.createQuery(jpql, Order.class)
+            .getResultList();
+  }
 }
