@@ -132,4 +132,30 @@ public class OrderRepository {
     return entityManager.createQuery(jpql, Order.class)
             .getResultList();
   }
+
+  public List<Order> findAllItems() {
+    String jpql = 
+      "select distinct o " +
+      "from Order o " +
+        "join fetch o.member m " +
+        "join fetch o.delivery d " +
+        "join fetch o.orderItems oi " +
+        "join fetch oi.item i";
+
+    return entityManager.createQuery(jpql, Order.class)
+                          .getResultList();
+  }
+
+  public List<Order> findAllItemsWithPaging(int offset, int limit) {
+    String jpql = 
+      "select o " +
+      "from Order o " +
+        "join fetch o.member m " +
+        "join fetch o.delivery d";
+
+    return entityManager.createQuery(jpql, Order.class)
+                          .setFirstResult(offset)
+                          .setMaxResults(limit)
+                          .getResultList();
+  }
 }
