@@ -55,7 +55,7 @@ public class OrderController {
     Model model) {
     List<Order> findOrders = orderService.findOrders(orderSearch);
     model.addAttribute("orders", findOrders);
-    return "/order/orderList";
+    return "order/orderList";
   }
 
   @PostMapping("/orders/{orderId}/cancel")

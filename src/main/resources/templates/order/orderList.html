@@ -4,8 +4,11 @@
 <head th:replace="fragments/header :: header" />
 
 <body>
+
   <div class="container">
+
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
+
     <div>
       <div>
         <form th:object="${orderSearch}" class="form-inline">
@@ -23,6 +26,7 @@
           <button type="submit" class="btn btn-primary mb-2">검색</button>
         </form>
       </div>
+
       <table class="table table-striped">
         <thead>
           <tr>
@@ -50,11 +54,15 @@
                 class="btn btn-danger">CANCEL</a>
             </td>
           </tr>
+
         </tbody>
       </table>
     </div>
+
     <div th:replace="fragments/footer :: footer" />
+
   </div> <!-- /container -->
+
 </body>
 <script>
   function cancel(id) {
