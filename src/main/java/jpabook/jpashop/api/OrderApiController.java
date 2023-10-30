@@ -14,6 +14,8 @@ import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderSearch;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
+import jpabook.jpashop.repository.order.query.OrderFlatDto;
+import jpabook.jpashop.repository.order.query.OrderItemQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
 import lombok.Data;
@@ -163,5 +165,37 @@ public class OrderApiController {
   public Result<List<OrderQueryDto>> ordersV4() {
     List<OrderQueryDto> orders = orderQueryRepository.findOrderQueryDtos();
     return new Result<>(orders);
+  }
+
+  /**
+   * V5. JPA에서 DTO로 바로 조회, 컬렉션 1 조회 최적화 버전 (1 + 1 Query)
+   * - 페이징 가능
+   */
+  @GetMapping("/api/v5/orders")
+  public Result<List<OrderQueryDto>> ordersV5() {
+    List<OrderQueryDto> orders = orderQueryRepository.findAllByDto_optimization();
+    return new Result<>(orders);
+  }
+
+  /**
+   * V6. JPA에서 DTO로 바로 조회, 플랫 데이터(1Query) (1 Query)
+   * - 페이징 불가능...
+   */
+  @GetMapping("/api/v6/orders")
+  public Result<List<OrderQueryDto>> ordersV6() {
+    List<OrderFlatDto> orders = orderQueryRepository.findAllByDto_flat();
+
+    return new Result<>(orders.stream()
+            .collect(Collectors.groupingBy(o -> new OrderQueryDto(o.getOrderId(), o.getName(),
+                                                                  o.getOrderDate(), o.getOrderStatus(),
+                                                                  o.getAddress()),
+                    Collectors.mapping(o -> new OrderItemQueryDto(o.getOrderId(), o.getItemName(),
+                                                                  o.getOrderPrice(), o.getCount()),
+                                      Collectors.toList())
+            )).entrySet().stream()
+              .map(e -> new OrderQueryDto(e.getKey().getOrderId(), e.getKey().getName(),
+                                          e.getKey().getOrderDate(), e.getKey().getOrderStatus(),
+                                          e.getKey().getAddress(), e.getValue()))
+            .collect(Collectors.toList()));
   }
 }
